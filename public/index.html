@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <title>Sora</title>
+    <style>
+      :root {
+        --show-loading: block
+      }
+      *, *:before, *:after {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      #app {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        min-height: 100vh;
+        background: #000000;
+      }
+      .loading-logo {
+        background-repeat: no-repeat;
+        width: 96px;
+        height: 96px;
+        display: var(--show-loading);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        position: absolute;
+      }
+    </style>
+  </head>
+  <body>
+    <noscript>
+      <strong>We're sorry but SoraNet doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+    <div id="app">
+    </div>
+    <img class="loading-logo" src="logo.svg"></img>
+    <!-- built files will be auto injected -->
+  </body>
+</html>

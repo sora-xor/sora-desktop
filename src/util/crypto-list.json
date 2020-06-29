@@ -1,0 +1,65 @@
+[{
+    "name": "Bitcoin",
+    "asset": "BTC",
+    "color": "F7931A",
+    "precision": 8
+  },
+  {
+    "name": "Ether",
+    "asset": "ETH",
+    "color": "627EEA",
+    "precision": 18
+  },
+  {
+    "name": "Sora",
+    "asset": "XOR",
+    "color": "FF0000",
+    "precision": 18
+  },
+  {
+    "name": "StableCoin",
+    "asset": "USD",
+    "color": "FFFFFF",
+    "precision": 2
+  }, {
+    "name": "StableCoin",
+    "asset": "JPY",
+    "color": "FFFFFF",
+    "precision": 0
+  }, {
+    "name": "StableCoin",
+    "asset": "CHF",
+    "color": "FFFFFF",
+    "precision": 2
+  }, {
+    "name": "StableCoin",
+    "asset": "RUB",
+    "color": "FFFFFF",
+    "precision": 2
+  }, {
+    "name": "StableCoin",
+    "asset": "QAR",
+    "color": "FFFFFF",
+    "precision": 2
+  }, {
+    "name": "StableCoin",
+    "asset": "DKK",
+    "color": "FFFFFF",
+    "precision": 2
+  }, {
+    "name": "StableCoin",
+    "asset": "NOK",
+    "color": "FFFFFF",
+    "precision": 2
+  }, {
+    "name": "StableCoin",
+    "asset": "XDR",
+    "color": "FFFFFF",
+    "precision": 2
+  }, {
+    "name": "StableCoin",
+    "asset": "XAU",
+    "color": "FFFFFF",
+    "precision": 3
+  }
+]
