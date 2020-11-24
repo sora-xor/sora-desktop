@@ -132,7 +132,10 @@ export default class ConfirmModal extends Vue {
       })
       this.$message.success('Success')
     } catch (error) {
-      this.$message.error('Failed execution of ethereum smart contract')
+      if (error.message.includes('Insufficient funds')) {
+        this.$message.error('The account you tried to send transaction from does not have enough funds to pay gas!')
+      }
+      console.error(error)
     }
   }
 }

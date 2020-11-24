@@ -17,6 +17,12 @@
     "precision": 18
   },
   {
+    "name": "Sora VAL",
+    "asset": "VAL",
+    "color": "FF0000",
+    "precision": 18
+  },
+  {
     "name": "StableCoin",
     "asset": "USD",
     "color": "FFFFFF",

@@ -14,7 +14,8 @@ const getPrecision = (v) => (v.split('.')[1] || []).length
 const errorMessages = {
   _userName: 'Username should match [a-z_0-9]{1,32}',
   _userDomain: 'Username should match [a-z_0-9]{1,32}@[a-z_0-9]{1,9}',
-  _userExist: 'This username does not exist',
+  _userNotExist: 'This username does not exist',
+  _userExist: 'This username already exist',
   _userIsMe: 'Username should not be same as your username',
 
   _keyPattern: 'Please provide correct key',
@@ -28,7 +29,7 @@ const errorMessages = {
 
   _asset: 'Please select asset',
   _amount: 'Please provide correct amount',
-  _fee: 'Not enough XOR to pay the fee',
+  _fee: 'Not enough VAL to pay the fee',
 
   _explorerQuery: 'Query is incorrect',
 

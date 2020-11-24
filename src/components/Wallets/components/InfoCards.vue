@@ -20,13 +20,18 @@
         <div class="info-cards_card-footer">
           <div
             role="button"
-            class="card_actions-button button"
+            :class="['card_actions-button', 'button', restrictedAsset ? 'disabled' : '']"
             @click="onOpenModal(modalTypes.TRANSFER)"
           >
-            <img
-              src="@/assets/wallet/blue-arrow.svg"
-              class="blue_arrow up"
+            <SvgIcon
+              icon-name="Arrow"
+              icon-class="blue_arrow up"
+              width="20"
+              height="20"
+              :icon-color="restrictedAsset ? iconColors.disabled : iconColors.active"
             >
+              <BlueArrow />
+            </SvgIcon>
             <span
               class="card_actions-button-text"
               data-cy="transfer"
@@ -34,43 +39,58 @@
           </div>
           <div
             role="button"
-            class="card_actions-button button"
+            :class="['card_actions-button', 'button', restrictedAsset ? 'disabled' : '']"
             @click="onOpenModal(modalTypes.RECEIVE)"
           >
-            <img
-              src="@/assets/wallet/blue-arrow.svg"
-              class="blue_arrow down"
+            <SvgIcon
+              icon-name="Arrow"
+              icon-class="blue_arrow down"
+              width="20"
+              height="20"
+              :icon-color="restrictedAsset ? iconColors.disabled : iconColors.active"
             >
+              <BlueArrow />
+            </SvgIcon>
             <span
               class="card_actions-button-text"
               data-cy="receive"
             >Receive</span>
           </div>
           <div
-            v-if="accountExist && accountEthAddress.length"
+            v-if="isAvaliableAction && accountEthAddress.length"
             role="button"
-            class="card_actions-button button"
+            :class="['card_actions-button', 'button', restrictedAsset ? 'disabled' : '']"
             @click="onOpenModal(modalTypes.WITHDRAWAL)"
           >
-            <img
-              src="@/assets/wallet/blue-arrow.svg"
-              class="blue_arrow right"
+            <SvgIcon
+              icon-name="Arrow"
+              icon-class="blue_arrow right"
+              width="20"
+              height="20"
+              :icon-color="restrictedAsset ? iconColors.disabled : iconColors.active"
             >
+              <BlueArrow />
+            </SvgIcon>
             <span
               class="card_actions-button-text"
               data-cy="withdraw"
             >Withdraw</span>
           </div>
           <div
-            v-if="accountExist"
+            v-if="isAvaliableAction"
             role="button"
-            class="card_actions-button button"
+            :class="['card_actions-button', 'button', restrictedAsset ? 'disabled' : '']"
             @click="onOpenModal(modalTypes.DEPOSIT)"
           >
-            <img
-              src="@/assets/wallet/blue-arrow.svg"
-              class="blue_arrow left"
+            <SvgIcon
+              icon-name="Arrow"
+              icon-class="blue_arrow left"
+              width="20"
+              height="20"
+              :icon-color="restrictedAsset ? iconColors.disabled : iconColors.active"
             >
+              <BlueArrow />
+            </SvgIcon>
             <span
               class="card_actions-button-text"
               data-cy="deposit"
@@ -221,6 +241,10 @@
 <script lang="ts">
 import { lazyComponent } from '@/router'
 import AssetIcon from '@/components/common/AssetIcon.vue'
+import SvgIcon from '@/components/common/SvgIcon.vue'
+
+import BlueArrow from '@/assets/wallet/blue-arrow.vue'
+
 import numberFormat from '@/components/mixins/numberFormat'
 import currencySymbol from '@/components/mixins/currencySymbol'
 import { BillingTypes } from '@/data/consts'
@@ -238,6 +262,11 @@ const MODAL_TYPES = {
   SIGN: 'SIGN'
 }
 
+enum ICON_COLORS {
+  active = '#1B8BFF',
+  disabled = '#95CAFF'
+}
+
 interface Wallet {
   amount: number;
   assetId: string;
@@ -251,7 +280,10 @@ interface Wallet {
     DepositModal: lazyComponent('Wallets/components/modals/DepositModal'),
     ReceiveModal: lazyComponent('Wallets/components/modals/ReceiveModal'),
     TransferModal: lazyComponent('Wallets/components/modals/TransferModal'),
-    WithdrawalModal: lazyComponent('Wallets/components/modals/WithdrawalModal')
+    WithdrawalModal: lazyComponent('Wallets/components/modals/WithdrawalModal'),
+
+    SvgIcon,
+    BlueArrow
   }
 })
 export default class InfoCards extends Mixins(
@@ -260,6 +292,7 @@ export default class InfoCards extends Mixins(
 ) {
   @Prop(Object) readonly wallet!: Wallet
 
+  iconColors = ICON_COLORS
   modalTypes = MODAL_TYPES
   isDepositModalVisible = false
   isReceiveModalVisible = false
@@ -280,11 +313,13 @@ export default class InfoCards extends Mixins(
   get amountWithPrecision () {
     return numberFormat.filter('formatPrecision')(this.wallet.amount)
   }
-  get accountExist () {
+  get restrictedAsset () {
+    return ['xor#sora'].includes(this.wallet.assetId)
+  }
+  get isAvaliableAction () {
     const assetDomain = this.wallet.assetId.split('#')[1]
     const allowedDomains = [
       'ethereum',
-      'd3',
       'sora'
     ]
 
@@ -314,6 +349,8 @@ export default class InfoCards extends Mixins(
   }
 
   onOpenModal (modalType) {
+    if (this.restrictedAsset) return
+
     this.requestDataBeforeOpen()
     if (modalType === this.modalTypes.DEPOSIT) {
       this.isDepositModalVisible = true
@@ -415,6 +452,9 @@ export default class InfoCards extends Mixins(
 }
 .info-cards > .info-cards_card > .info-cards_card-footer .card_actions-button-text {
   margin-left: 0.5rem;
+}
+.info-cards > .info-cards_card > .info-cards_card-footer .disabled .card_actions-button-text {
+  color: #95caff;
 }
 .info-cards > .info-cards_card > .info-cards_card-footer .info-cards_card-footer-market {
   display: flex;

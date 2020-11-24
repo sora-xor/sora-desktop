@@ -32,6 +32,7 @@ export default class AssetIcon extends Vue {
     'NOK',
     'XDR',
     'XAU',
+    'VAL',
     'XOR',
     'ETH'
   ]

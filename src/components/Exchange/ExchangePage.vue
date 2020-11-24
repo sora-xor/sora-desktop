@@ -13,7 +13,7 @@
           >
             <template slot="options">
               <el-option
-                v-for="(w, index) in wallets"
+                v-for="(w, index) in avaliableWallets"
                 :key="index"
                 :label="`${w.name} (${w.asset})`"
                 :value="w.assetId"
@@ -102,7 +102,7 @@
             <span class="price text-overflow">{{ totalSend }}</span>
           </el-tooltip>
         </div>
-        <span class="exchange_item-fee">Fee: {{ exchangeFeeAmount }} XOR</span>
+        <span class="exchange_item-fee">Fee: {{ exchangeFeeAmount }} VAL</span>
       </div>
       <div class="exchange_item small">
         <el-row
@@ -169,6 +169,8 @@ import numberFormat from '@/components/mixins/numberFormat'
 import TransactionMixin from '@/components/mixins/transaction'
 import { FeeTypes, EXCHANGE_ACCOUNT, BillingTypes } from '@/data/consts'
 
+const BNT = BN.config({ ROUNDING_MODE: BN.ROUND_DOWN })
+
 const BN_FORMAT = {
   prefix: '',
   decimalSeparator: '.',
@@ -204,17 +206,17 @@ export default class ExchangePage extends Mixins(
 
   isLoading = false
 
-  XOR = 'xor#sora'
+  VAL = 'val#sora'
 
   validations () {
-    const feeType = this.exchangeFee[this.XOR]
-      ? this.exchangeFee[this.XOR].feeType
+    const feeType = this.exchangeFee[this.VAL]
+      ? this.exchangeFee[this.VAL].feeType
       : 'FIXED'
     const mainWallet = {
       ...this.walletByAsset(this.form.assetFrom)
     }
     const feeWallet = {
-      ...this.walletByAsset(this.XOR),
+      ...this.walletByAsset(this.VAL),
       fee: this.currentExchangeFee
     }
     return {
@@ -238,9 +240,9 @@ export default class ExchangePage extends Mixins(
   }
 
   async created () {
-    const isSoraExist = this.wallets.some(({ assetId }) => assetId === this.XOR)
+    const isSoraExist = this.avaliableWallets.some(({ assetId }) => assetId === this.VAL)
     if (isSoraExist) {
-      this.form.assetFrom = this.XOR
+      this.form.assetFrom = this.VAL
     }
 
     this.form.assetTo = this.xstList[0].assetId
@@ -253,6 +255,11 @@ export default class ExchangePage extends Mixins(
   @Getter accountQuorum
   @Getter exchangeFee
 
+  get avaliableWallets () {
+    const XOR = 'xor#sora'
+    return this.wallets.filter(({ assetId }) => assetId !== XOR)
+  }
+
   get xstList () {
     const list = uniqBy('assetId')([
       { assetId: 'usd#xst', name: 'StableCoin', asset: 'USD', precision: 2 },
@@ -264,7 +271,7 @@ export default class ExchangePage extends Mixins(
       { assetId: 'nok#xst', name: 'StableCoin', asset: 'NOK', precision: 2 },
       { assetId: 'xdr#xst', name: 'StableCoin', asset: 'XDR', precision: 2 },
       { assetId: 'xau#xst', name: 'StableCoin', asset: 'XAU', precision: 3 },
-      ...this.wallets
+      ...this.avaliableWallets
     ]) as any
     return list.filter(({ assetId }) => assetId !== this.form.assetFrom)
   }
@@ -302,19 +309,19 @@ export default class ExchangePage extends Mixins(
   }
 
   get currentExchangeFee () {
-    return this.exchangeFee[this.XOR]
-      ? this.exchangeFee[this.XOR].feeFraction
+    return this.exchangeFee[this.VAL]
+      ? this.exchangeFee[this.VAL].feeFraction
       : 0
   }
   get exchangeFeeAmount () {
     if (
-      this.exchangeFee[this.XOR] &&
-      this.exchangeFee[this.XOR].feeType === 'FRACTION'
+      this.exchangeFee[this.VAL] &&
+      this.exchangeFee[this.VAL].feeType === 'FRACTION'
     ) {
       return this.$multiply(
         this.form.amountFrom,
         this.currentExchangeFee,
-        this.walletByAsset(this.XOR).precision
+        this.walletByAsset(this.VAL).precision
       ).toString()
     }
     return this.currentExchangeFee
@@ -323,7 +330,7 @@ export default class ExchangePage extends Mixins(
   get totalSend () {
     const amount = this.form.amountFrom || '0'
     if (new BN(amount).eq(0)) return '0'
-    const wallet = this.wallets
+    const wallet = this.avaliableWallets
       .find(({ assetId }) => this.form.assetFrom === assetId)
     const precision = isObject(wallet) as any ? wallet.precision : 18
     return new BN(amount).decimalPlaces(precision).toFormat(
@@ -349,7 +356,7 @@ export default class ExchangePage extends Mixins(
   walletByAsset (asset) {
     if (!asset.length) return {}
 
-    const wallet = this.wallets
+    const wallet = this.avaliableWallets
       .find(({ assetId }) => (asset === assetId))
 
     return wallet || {}
@@ -400,7 +407,7 @@ export default class ExchangePage extends Mixins(
 
   swapWallets () {
     const { assetFrom, assetTo, amountFrom, amountTo } = this.form
-    const isSwapable = this.wallets
+    const isSwapable = this.avaliableWallets
       .some(({ assetId }) => assetId === assetTo)
     if (isSwapable) {
       this.form = {
@@ -437,7 +444,7 @@ export default class ExchangePage extends Mixins(
   }
 
   async updateBillingData () {
-    const assetId = this.XOR
+    const assetId = this.VAL
     if (!assetId.length) return
     const [, domain] = this.accountId.split('@')
     await this.getBillingData({

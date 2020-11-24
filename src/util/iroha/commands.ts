@@ -110,17 +110,11 @@ const createTransferTransaction = (quorum, {
   )
 
   if (fee > 0) {
-    if (feeType === FeeTypes.WITHDRAWAL) {
-      tx = txHelper.addCommand(
-        tx,
-        'transferAsset',
-        { srcAccountId, destAccountId, assetId, description: 'withdrawal fee', amount: feeAmount }
-      )
-    } else if (feeType === FeeTypes.EXCHANGE) {
+    if (feeType === FeeTypes.EXCHANGE) {
       tx = txHelper.addCommand(
         tx,
         'subtractAssetQuantity',
-        { assetId: 'xor#sora', amount: feeAmount }
+        { assetId: 'val#sora', amount: feeAmount }
       )
     } else {
       tx = txHelper.addCommand(

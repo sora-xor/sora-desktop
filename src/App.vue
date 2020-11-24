@@ -170,6 +170,10 @@ a:hover {
   padding-bottom: 1rem !important;
 }
 
+#app .disabled {
+  cursor: not-allowed;
+}
+
 /*
  * Login and SignUp pages
  */
@@ -291,6 +295,7 @@ a:hover {
 /* DEPOSIT-MODAL */
 
 /* BLUE ARROW */
+
 .blue_arrow.up {
   transform: rotate(-90deg);
 }

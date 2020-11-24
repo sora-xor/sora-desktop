@@ -398,6 +398,9 @@ export default class WithdrawalModal extends Mixins(
       this.closeWithdrawDialog()
       this.$message.success('Success! Transaction sent!')
     } catch (error) {
+      if (error.message.includes('Insufficient funds')) {
+        this.$message.error('The account you tried to send transaction from does not have enough funds to pay gas!')
+      }
       console.error(error)
     }
     this.isSending = false

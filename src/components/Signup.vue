@@ -72,7 +72,19 @@
               />
             </el-form-item>
             <el-form-item
-              v-else-if="isActiveFieldType(AvaliableFields.Passphrase)"
+              v-if="isActiveFieldType(AvaliableFields.Keypair)"
+              prop="username"
+            >
+              <sora-input
+                :variable="$v.form.username"
+                :disabled="isLoading"
+                label="Username"
+                placeholder="example"
+                @input="v => form.username = v"
+              />
+            </el-form-item>
+            <el-form-item
+              v-if="isActiveFieldType(AvaliableFields.Passphrase)"
               prop="privateKey"
             >
               <sora-input
@@ -202,7 +214,8 @@ export default class SignUp extends Mixins(
     type: AvaliableFields.Generate,
     mnemonic: '',
     nodeIp: '',
-    privateKey: ''
+    privateKey: '',
+    username: ''
   }
   result = {
     mnemonic: '',
@@ -214,6 +227,7 @@ export default class SignUp extends Mixins(
   showAdvancedOptions = false
   avaliableFieldsSelect = [
     { value: AvaliableFields.Generate, label: 'Generate' },
+    { value: AvaliableFields.Keypair, label: 'Use my key pair' },
     { value: AvaliableFields.Passphrase, label: 'Use my passphrase' }
   ]
   isFileDownloaded = false
@@ -227,6 +241,17 @@ export default class SignUp extends Mixins(
             ? {
               required,
               _keyPattern
+            } : {},
+          username: this.form.type === AvaliableFields.Keypair
+            ? {
+              required,
+              _userName: _user.name,
+              _userExist: async () => {
+                const isExist = await _user.nameExist(
+                  this.servicesIPs['data-collector-service']
+                )(`${this.form.username}@sora`)
+                return !isExist
+              }
             } : {},
           mnemonic: this.form.type === AvaliableFields.Passphrase
             ? {
@@ -244,6 +269,7 @@ export default class SignUp extends Mixins(
   }
 
   @Getter registrationIPs
+  @Getter servicesIPs
 
   created () {
     this.form.nodeIp = this.registrationIPs[0].value || ''
@@ -351,7 +377,11 @@ export default class SignUp extends Mixins(
   }
 
   downloadFile () {
-    const data = `Username: ${this.result.username}\nPassphrase: ${this.result.mnemonic}\nXOR key: ${this.result.irohaPrivateKey}\nETH key: ${this.result.ethPrivateKey}\n\n# This file contains private keys from your wallets, XOR key is used for authorization in the system by key pair.\n# Save this file in a safe place!`
+    let data = `Username: ${this.result.username}\n`
+    if (this.result.mnemonic.length) {
+      data += `Passphrase: ${this.result.mnemonic}\n`
+    }
+    data += `VAL key: ${this.result.irohaPrivateKey}\nETH key: ${this.result.ethPrivateKey}\n\n# This file contains private keys from your wallets, VAL key is used for authorization in the system by key pair.\n# Save this file in a safe place!`
     const filename = `${this.result.username}.priv`
     const blob = new Blob(
       [data],
@@ -378,16 +408,21 @@ export default class SignUp extends Mixins(
         publicKey
       }
     } else if (this.form.type === AvaliableFields.Keypair) {
+      // TODO: We need to think about what to do with UX,
+      // because authorization via keyword pair involves
+      // quite a different behavior from normal authorization via passphrase.
       const mnemonic = mnemonicUtil.generateMnemonic()
-      const irohaPrivateKey = await mnemonicUtil.getIrohaKey(mnemonic)
+      const irohaPrivateKey = this.form.privateKey
       const ethPrivateKey = await mnemonicUtil.getEthereumKey(mnemonic)
       const publicKey = derivePublicKey(
         Buffer.from(irohaPrivateKey, 'hex')
       ).toString('hex')
-      const username = `did_sora_${publicKey.substr(0, 20)}@sora`
+      const username = this.form.username.length
+        ? `${this.form.username}@sora`
+        : `did_sora_${publicKey.substr(0, 20)}@sora`
       return {
         username,
-        mnemonic,
+        mnemonic: '',
         irohaPrivateKey,
         ethPrivateKey,
         publicKey

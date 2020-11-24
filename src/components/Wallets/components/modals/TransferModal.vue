@@ -126,7 +126,7 @@ export default class TransferModal extends Mixins(
         to: {
           required,
           _userDomain: _user.nameDomain,
-          _userExist: _user.nameExist(
+          _userNotExist: _user.nameExist(
             this.servicesIPs['data-collector-service']
           ),
           _userIsMe: _user.isMe(this.accountId)

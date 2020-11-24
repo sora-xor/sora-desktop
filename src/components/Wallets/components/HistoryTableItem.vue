@@ -26,7 +26,7 @@
       </template>
       <template v-else>
         <div>
-          <p><span class="label">Amount:</span> {{ c[cc.type].sign }}{{ c[cc.type].amount | formatPrecision }} {{ cc.type === CommandType.subtractAssetQuantity ? 'XOR' : assetName(c[cc.type].assetId) }}</p>
+          <p><span class="label">Amount:</span> {{ c[cc.type].sign }}{{ c[cc.type].amount | formatPrecision }} {{ cc.type === CommandType.subtractAssetQuantity ? 'VAL' : assetName(c[cc.type].assetId) }}</p>
         </div>
       </template>
     </div>

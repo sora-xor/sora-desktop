@@ -132,7 +132,7 @@ export default class WalletsPage extends Vue {
     await this.getAccountAssets()
 
     if (this.wallets.length) {
-      this.$router.push(`/wallets/xor$sora`)
+      this.$router.push(`/wallets/val$sora`)
     }
   }
 
