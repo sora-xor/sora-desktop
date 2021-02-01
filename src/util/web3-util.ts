@@ -93,10 +93,9 @@ function getInfoFromContract (contract: JsonContract): InfoContract {
 }
 
 function createWeb3Provider (url) {
-  const web3 = new Web3(
-    new Web3.providers.HttpProvider(
-      `https://:ea97737fd70e4e0ba2b6e25fea65c8a8@${url}`
-    )
+  const web3 = new Web3()
+  web3.setProvider(
+    `${PROTOCOL}//${url}`
   )
   return web3
 }
