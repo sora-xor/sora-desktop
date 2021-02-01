@@ -144,7 +144,7 @@ export default class TransferModal extends Mixins(
 
   isSending = false
   transferForm = {
-    to: null,
+    to: '',
     amount: '',
     description: ''
   }
@@ -156,6 +156,9 @@ export default class TransferModal extends Mixins(
   @Getter currentWalletPrecision
 
   get currentTransferFee () {
+    const sora = '@sora'
+    if (!this.transferForm.to.includes(sora)) return 0
+
     return this.transferFee[this.wallet.assetId]
       ? this.transferFee[this.wallet.assetId].feeFraction
       : 0
