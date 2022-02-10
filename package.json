@@ -81,7 +81,7 @@
     "fs-extra": "^8.1.0",
     "grpc": "^1.24.2",
     "istanbul-instrumenter-loader": "^3.0.1",
-    "node-sass": "^4.12.0",
+    "node-sass": "^7.0.0",
     "sass-loader": "^8.0.0",
     "solc": "^0.5.13",
     "typescript": "^3.8.3",
